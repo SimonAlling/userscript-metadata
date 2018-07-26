@@ -1,0 +1,38 @@
+{
+  "name": "ts-userscript-metadata",
+  "version": "0.1.0",
+  "description": "A strongly typed userscript metadata library.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "sideEffects": false,
+  "author": "Simon Alling",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/escape-string-regexp": "^1.0.0",
+    "@types/jest": "^23.3.0",
+    "escape-string-regexp": "^1.0.5",
+    "jest": "^23.4.1",
+    "ts-jest": "^23.0.1",
+    "typescript": "^2.9.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
+  },
+  "dependencies": {
+    "extract-comments": "^1.0.0"
+  }
+}

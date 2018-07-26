@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "strict": true,
+        "module": "es2015",
+        "declaration": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "outDir": "dist",
+        "lib": [
+            "es2018", "es2016.array.include"
+        ]
+    },
+    "files": [
+        "./src/index.ts"
+    ]
+}
