@@ -106,7 +106,6 @@ export const DEFAULT_ITEMS = {
     }),
     noframes: new BooleanItem({
         key: KEY.noframes,
-        required: false,
     }),
     require: new StringItem({
         key: KEY.require,

@@ -1,4 +1,5 @@
 import { Either, Left, Right, Value } from "./types";
+import { fromMaybe } from "./common";
 import {
     Constraint,
     not,
@@ -9,19 +10,37 @@ import {
 } from "./common";
 import * as Msg from "./messages";
 
-export interface Constrained<T> {
-    readonly constraints: ReadonlyArray<Constraint<T>>
+type Constraints<T> = ReadonlyArray<Constraint<T>>
+
+export interface Constrained<T extends Value> {
+    readonly constraints: Constraints<T>
+    withConstraints(constraints: Constraints<T>): Constrained<T> & BaseItem<T>
+    withoutConstraints(): Constrained<T> & BaseItem<T>
 }
 
-export interface ItemDescription<T> {
-    readonly key: string
+export interface Uniqueable<T extends Value> {
+    readonly unique: boolean
+    butUnique(): Uniqueable<T> & BaseItem<T>
+    butNotUnique(): Uniqueable<T> & BaseItem<T>
+}
+
+export interface Requireable<T extends Value> {
     readonly required: boolean
+    butRequired(): Requireable<T> & BaseItem<T>
+    butNotRequired(): Requireable<T> & BaseItem<T>
+}
+
+export interface ItemDescription {
+    readonly key: string
+}
+
+export interface NonBooleanItemDescription<T> extends ItemDescription {
+    readonly required: boolean
+    readonly unique: boolean
     readonly constraints?: ReadonlyArray<Constraint<T>>
 }
 
-export interface ItemDescription_String extends ItemDescription<string> {
-    readonly unique: boolean
-}
+export type ItemDescription_String = NonBooleanItemDescription<string>
 
 export type ValueValidationResult<T> = Either<string, T>
 
@@ -31,17 +50,17 @@ export type ItemCollection = { readonly [k: string]: Item }
 
 export abstract class BaseItem<T extends Value> {
     public abstract validate(value: Value): ValueValidationResult<T>;
-    public readonly key: string;
-    public readonly required: boolean;
     public abstract readonly unique: boolean;
-    constructor(description: ItemDescription<T>) {
+    public abstract readonly required: boolean;
+    public readonly key: string;
+    constructor(protected readonly description: ItemDescription) {
         this.key = description.key;
-        this.required = description.required;
     }
 }
 
 export class BooleanItem extends BaseItem<true> {
     public readonly unique = true;
+    public readonly required = false;
     public validate(value: Value): ValueValidationResult<true> {
         return (
             value === true
@@ -51,12 +70,28 @@ export class BooleanItem extends BaseItem<true> {
     }
 }
 
-export class StringItem extends BaseItem<string> implements Constrained<string> {
+export abstract class NonBooleanItem<T extends Value> extends BaseItem<T> implements Constrained<T>, Uniqueable<T>, Requireable<T> {
+    public readonly required: boolean;
     public readonly unique: boolean;
-    public readonly constraints: ReadonlyArray<Constraint<string>>;
-    constructor(description: ItemDescription_String) {
+    public readonly constraints: ReadonlyArray<Constraint<T>>;
+    constructor(protected readonly description: NonBooleanItemDescription<T>) {
         super(description);
+        this.required = description.required;
         this.unique = description.unique;
+        this.constraints = fromMaybe([], description.constraints);
+    }
+    public abstract butRequired(): NonBooleanItem<T>;
+    public abstract butNotRequired(): NonBooleanItem<T>;
+    public abstract butUnique(): NonBooleanItem<T>;
+    public abstract butNotUnique(): NonBooleanItem<T>;
+    public abstract withConstraints(constraints: Constraints<T>): NonBooleanItem<T>;
+    public abstract withoutConstraints(): NonBooleanItem<T>;
+}
+
+export class StringItem extends NonBooleanItem<string> implements Constrained<string>, Uniqueable<string>, Requireable<string> {
+    public readonly constraints: ReadonlyArray<Constraint<string>>;
+    constructor(protected readonly description: ItemDescription_String) {
+        super(description);
         this.constraints = [
             {
                 requirement: not(containsOnlyWhitespace),
@@ -75,9 +110,34 @@ export class StringItem extends BaseItem<string> implements Constrained<string> 
                 message: Msg.lineBreaksNotAllowed,
             },
         ].concat(
-            description.constraints === undefined ? [] : description.constraints
+            fromMaybe([], description.constraints)
         );
     }
+
+    public butRequired(): StringItem {
+        return new StringItem({ ...this.description, required: true });
+    }
+
+    public butNotRequired(): StringItem {
+        return new StringItem({ ...this.description, required: false });
+    }
+
+    public butUnique(): StringItem {
+        return new StringItem({ ...this.description, unique: true });
+    }
+
+    public butNotUnique(): StringItem {
+        return new StringItem({ ...this.description, unique: false });
+    }
+
+    public withConstraints(constraints: Constraints<string>): StringItem {
+        return new StringItem({ ...this.description, constraints: this.constraints.concat(constraints) });
+    }
+
+    public withoutConstraints(): StringItem {
+        return new StringItem({ ...this.description, constraints: [] });
+    }
+
     public validate(value: Value): ValueValidationResult<string> {
         if (typeof value !== "string") {
             return { label: Left, content: "Only strings allowed." };

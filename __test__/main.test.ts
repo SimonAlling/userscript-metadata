@@ -1,5 +1,6 @@
 import { Left, Right } from "../src/types";
-import { DEFAULT_ITEMS, Kind, StringItem } from "../src/index";
+import { DEFAULT_ITEMS, Kind } from "../src/index";
+import * as Msg from "../src/messages";
 import { readAndValidate, validateAndStringify, validateAndStringifyWith } from "../src/index";
 import {
     METADATA_TYPICAL,
@@ -26,11 +27,7 @@ it("typical metadata is invalid without underscoresAsHyphens", () => {
 });
 
 it("typical metadata is invalid when @match is unique", () => {
-    const ITEM_MATCH = new StringItem({
-        key: "match",
-        unique: true,
-        required: false,
-    });
+    const ITEM_MATCH = DEFAULT_ITEMS.match.butUnique();
     expect(validateAndStringifyWith(
         {
             ...DEFAULT_ITEMS,
@@ -42,4 +39,51 @@ it("typical metadata is invalid when @match is unique", () => {
             item: ITEM_MATCH,
         },
     ] });
+});
+
+it("typical metadata is invalid when description is required", () => {
+    const ITEM_DESCRIPTION = DEFAULT_ITEMS.description.butRequired();
+    expect(validateAndStringifyWith(
+        {
+            ...DEFAULT_ITEMS,
+            description: ITEM_DESCRIPTION,
+        },
+    )(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+        {
+            kind: Kind.REQUIRED_MISSING,
+            item: ITEM_DESCRIPTION,
+        },
+    ] });
+});
+
+it("typical metadata is invalid when name cannot contain whitespace", () => {
+    const ITEM_NAME = DEFAULT_ITEMS.name.withConstraints([
+        {
+            requirement: s => !(/\s/.test(s)),
+            message: Msg.whitespaceNotAllowed,
+        },
+    ]);
+    expect(validateAndStringifyWith(
+        {
+            ...DEFAULT_ITEMS,
+            name: ITEM_NAME,
+        },
+    )(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+        {
+            kind: Kind.INVALID_VALUE,
+            entry: { key: "name", value: "Example Userscript" },
+            reason: Msg.whitespaceNotAllowed,
+        },
+    ] });
+});
+
+it("typical metadata with non-semver version is valid when version has no constraints", () => {
+    const ITEM_VERSION = DEFAULT_ITEMS.version.withoutConstraints();
+    const METADATA_WITH_WEIRD_VERSION = { ...METADATA_TYPICAL, version: "Beta" };
+    expect(validateAndStringifyWith(
+        {
+            ...DEFAULT_ITEMS,
+            version: ITEM_VERSION,
+        },
+    )(METADATA_WITH_WEIRD_VERSION)).toEqual({ label: Right, content: STRINGIFIED_TYPICAL.replace(METADATA_TYPICAL.version, "Beta") });
 });
