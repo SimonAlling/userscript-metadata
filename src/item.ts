@@ -1,5 +1,5 @@
 import { Either, Left, Right, Value } from "./types";
-import { fromMaybe } from "./common";
+import { fromMaybeUndefined } from "./common";
 import {
     Constraint,
     not,
@@ -64,9 +64,9 @@ export class BooleanItem extends BaseItem<true> {
     public validate(value: Value): ValueValidationResult<true> {
         return (
             value === true
-            ? { label: Right, content: true }
-            : { label: Left, content: Msg.onlyTrueAllowed }
-        );
+            ? Right(true)
+            : Left(Msg.onlyTrueAllowed)
+        ) as ValueValidationResult<true>;
     }
 }
 
@@ -78,7 +78,7 @@ export abstract class NonBooleanItem<T extends Value> extends BaseItem<T> implem
         super(description);
         this.required = description.required;
         this.unique = description.unique;
-        this.constraints = fromMaybe([], description.constraints);
+        this.constraints = fromMaybeUndefined([], description.constraints);
     }
     public abstract butRequired(): NonBooleanItem<T>;
     public abstract butNotRequired(): NonBooleanItem<T>;
@@ -110,7 +110,7 @@ export class StringItem extends NonBooleanItem<string> implements Constrained<st
                 message: Msg.lineBreaksNotAllowed,
             },
         ].concat(
-            fromMaybe([], description.constraints)
+            fromMaybeUndefined([], description.constraints)
         );
     }
 
@@ -140,13 +140,13 @@ export class StringItem extends NonBooleanItem<string> implements Constrained<st
 
     public validate(value: Value): ValueValidationResult<string> {
         if (typeof value !== "string") {
-            return { label: Left, content: "Only strings allowed." };
+            return Left("Only strings allowed.");
         }
         for (const c of this.constraints) {
             if (!c.requirement(value)) {
-                return { label: Left, content: c.message };
+                return Left(c.message);
             }
         }
-        return { label: Right, content: value };
+        return Right(value);
     }
 }

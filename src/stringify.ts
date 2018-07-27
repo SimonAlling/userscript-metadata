@@ -1,5 +1,5 @@
 import { Entries, EntriesOptions, Entry, Metadata, SingleValue, Options } from "./types";
-import { fromMaybe } from "./common";
+import { fromMaybeUndefined } from "./common";
 import { toEntries } from "./conversion";
 import { UNDERSCORES_AS_HYPHENS_DEFAULT } from "./validation";
 import { START_TAG, END_TAG, COMMENT_PREFIX, TAG_PREFIX } from "./syntax";
@@ -9,16 +9,16 @@ const MINIFY_DEFAULT = false;
 const SPACING_DEFAULT = 2;
 
 export function stringify(metadata: Metadata, options: Options = {}): string {
-    const underscoresAsHyphens = fromMaybe(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
+    const underscoresAsHyphens = fromMaybeUndefined(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
     const entries = toEntries(metadata, underscoresAsHyphens);
     return stringifyEntries(entries, options);
 }
 
 export function stringifyEntries(entries: Entries, options: EntriesOptions = {}) {
     // minify option overrides align and spacing.
-    const minify = fromMaybe(MINIFY_DEFAULT, options.minify);
-    const align = minify ? false : fromMaybe(ALIGN_DEFAULT, options.align);
-    const spacing = minify ? 1 : fromMaybe(SPACING_DEFAULT, options.spacing);
+    const minify = fromMaybeUndefined(MINIFY_DEFAULT, options.minify);
+    const align = minify ? false : fromMaybeUndefined(ALIGN_DEFAULT, options.align);
+    const spacing = minify ? 1 : fromMaybeUndefined(SPACING_DEFAULT, options.spacing);
     return (
         (<string[]> [])
         .concat(START_TAG)

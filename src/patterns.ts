@@ -1,7 +1,7 @@
 import * as escapeStringRegexp from "escape-string-regexp";
 import { r } from "./common";
 
-type Maybe<T> = T | null;
+type NullOr<T> = T | null;
 
 const REGEX_MATCH_ALL = r`<all_urls>`;
 const REGEX_MATCH_SCHEME = r`\*|https?`;
@@ -64,7 +64,7 @@ function regexify(segment: string): string {
 }
 
 // Returns null if the pattern is invalid:
-function extractGroup(group: Group, matchPattern: string): Maybe<string> {
+function extractGroup(group: Group, matchPattern: string): NullOr<string> {
     try {
         const match = normalizeMatchPattern(matchPattern).match(REGEX_MATCH_PATTERN);
         return match === null ? null : match[group];
@@ -73,14 +73,14 @@ function extractGroup(group: Group, matchPattern: string): Maybe<string> {
     }
 }
 
-export function schemeIn(matchPattern: string): Maybe<string> {
+export function schemeIn(matchPattern: string): NullOr<string> {
     return extractGroup(Group.SCHEME, matchPattern);
 }
 
-export function hostIn(matchPattern: string): Maybe<string> {
+export function hostIn(matchPattern: string): NullOr<string> {
     return extractGroup(Group.HOST, matchPattern);
 }
 
-export function pathIn(matchPattern: string): Maybe<string> {
+export function pathIn(matchPattern: string): NullOr<string> {
     return extractGroup(Group.PATH, matchPattern);
 }

@@ -13,7 +13,7 @@ export function not<T>(f: (x: T) => boolean): (x: T) => boolean {
     return x => !f(x);
 }
 
-export function fromMaybe<T>(fallback: T, x: T | undefined): T {
+export function fromMaybeUndefined<T>(fallback: T, x: T | undefined): T {
     return x === undefined ? fallback : x;
 }
 

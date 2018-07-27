@@ -27,15 +27,29 @@ export interface EntriesOptions {
 
 export type Options = MetadataOptions & EntriesOptions
 
-// Inspired by Haskell's Either.
-// Left indicates failure; Right (as in correct) indicates success.
-export type Either<A, B> = {
-    readonly label: "Left"
-    readonly content: A
-} | {
-    readonly label: "Right"
-    readonly content: B
-}
+// Maybe
+export type Just<T> = { Just: T }
+export type Nothing = {}
+export type Maybe<T> = Just<T> | Nothing
+export const Nothing: Nothing = {};
+export function Just<T>(x: T): Just<T> { return { Just: x }; }
+export function isJust<T>(x: Maybe<T>): x is Just<T> { return "Just" in x; }
 
-export const Left = "Left";
-export const Right = "Right";
+// Either
+export type Left<L> = { Left: L }
+export type Right<R> = { Right: R }
+export type Either<L, R> = Left<L> | Right<R>
+export function Left<L>(x: L): Left<L> { return { Left: x }; }
+export function Right<R>(x: R): Right<R> { return { Right: x }; }
+export function isLeft<L, R>(x: Either<L, R>): x is Left<L> { return "Left" in x; }
+export function isRight<L, R>(x: Either<L, R>): x is Right<R> { return "Right" in x; }
+export function fromEither<L, R, Y>(
+    fl: (l: L) => Y,
+    fr: (r: R) => Y,
+    x: Either<L, R>,
+): Y {
+    return isLeft(x) ? fl(x.Left) : fr(x.Right);
+}
+export function mapEither<L, X, Y>(f: (x: X) => Y, e: Either<L, X>): Either<L, Y> {
+    return isLeft(e) ? Left(e.Left) : Right(f(e.Right));
+}

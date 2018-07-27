@@ -1,6 +1,6 @@
 import {
-    Kind, Left, Metadata, Right,
-    validate, validateWith,
+    Kind, Metadata, Right,
+    isLeft, isRight, validate, validateWith,
 } from "../src/index";
 import {
     METADATA_EMPTY,
@@ -69,39 +69,39 @@ const METADATA_INVALID_NOFRAMES: Metadata = {
 
 it("empty metadata is valid with empty item list", () => {
     const result = validateWith(ITEMS_EMPTY)(METADATA_EMPTY);
-    expect(result.label).toBe(Right);
+    expect(isRight(result)).toEqual(true);
 });
 
 it("empty metadata is invalid with default item list", () => {
     const result = validate(METADATA_EMPTY);
-    expect(result.label).toBe(Left);
+    expect(isLeft(result)).toEqual(true);
 });
 
 it("basic metadata is valid with default item list", () => {
     const result = validate(METADATA_BASIC);
-    expect(result.label).toBe(Right);
+    expect(isRight(result)).toEqual(true);
 });
 
 it("basic metadata is invalid with empty item list", () => {
     const result = validateWith(ITEMS_EMPTY)(METADATA_BASIC);
-    expect(result.label).toBe(Left);
+    expect(isLeft(result)).toEqual(true);
 });
 
 it("validation returns the same metadata", () => {
     const result = validate(METADATA_BASIC);
-    if (result.label === Right) {
-        expect(result.content).toBe(METADATA_BASIC);
+    if (isRight(result)) {
+        expect(result.Right).toBe(METADATA_BASIC);
     }
 });
 
 it("typical metadata is valid", () => {
     const result = validate(METADATA_TYPICAL);
-    expect(result.label).toBe(Right);
+    expect(isRight(result)).toEqual(true);
 });
 
 it("metadata with a valid @run-at value is valid", () => {
     const result = validate(METADATA_RUN_AT);
-    expect(result.label).toBe(Right);
+    expect(isRight(result)).toEqual(true);
 });
 
 
@@ -145,9 +145,9 @@ it("an invalid @noframes value is caught", () => {
 
 it("multiple entries for unique items are caught", () => {
     const result = validate(METADATA_DUPLICATES);
-    expect(result.label).toBe(Left);
-    if (result.label === Left) {
-        const errors = result.content;
+    expect(isLeft(result)).toEqual(true);
+    if (isLeft(result)) {
+        const errors = result.Left;
         expect(errors.length).toBe(1);
         expect(errors[0].kind).toBe(Kind.MULTIPLE_UNIQUE);
     }
@@ -155,9 +155,9 @@ it("multiple entries for unique items are caught", () => {
 
 it("multiple errors are caught", () => {
     const result = validate(METADATA_MULTIPLE_ERRORS);
-    expect(result.label).toBe(Left);
-    if (result.label === Left) {
-        const errors = result.content;
+    expect(isLeft(result)).toEqual(true);
+    if (isLeft(result)) {
+        const errors = result.Left;
         expect(errors.length).toBeGreaterThan(5);
     }
 });

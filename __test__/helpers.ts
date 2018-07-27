@@ -1,4 +1,4 @@
-import { Kind, Left, Metadata, validate } from "../src/index";
+import { Kind, Left, Metadata, validate, isLeft } from "../src/index";
 
 export function show(xs: string[]): string {
     return xs.join(", ");
@@ -7,9 +7,9 @@ export function show(xs: string[]): string {
 function expectInvalid(kind: Kind.INVALID_KEY | Kind.INVALID_VALUE) {
     return (metadata: Metadata, reasonSubstring: string): void => {
         const result = validate(metadata);
-        expect(result.label).toBe(Left);
-        if (result.label === Left) {
-            const errors = result.content;
+        expect(isLeft(result)).toBe(true);
+        if (isLeft(result)) {
+            const errors = result.Left;
             expect(errors.length).toBe(1);
             const firstError = errors[0];
             expect(firstError.kind).toBe(kind);

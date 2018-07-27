@@ -1,5 +1,5 @@
-import { Either, Entry, Left, Metadata, MetadataOptions, Right } from "./types";
-import { fromMaybe } from "./common";
+import { Either, Entry, Left, Metadata, MetadataOptions, Right, isLeft } from "./types";
+import { fromMaybeUndefined } from "./common";
 import { Item, ItemCollection } from "./item";
 import { toEntries } from "./conversion";
 import { DEFAULT_ITEMS } from "./data";
@@ -39,10 +39,10 @@ export type ValidationError = {
 function validateKey(key: string): Either<string, string> {
     for (const rule of KEY_RULES) {
         if (!rule.requirement(key)) {
-            return { label: Left, content: rule.message };
+            return Left(rule.message);
         }
     }
-    return { label: Right, content: key };
+    return Right(key);
 }
 
 export const validateEntries = validateEntriesWith(DEFAULT_ITEMS);
@@ -63,8 +63,8 @@ export function validateEntriesWith(items: ItemCollection) {
         entries.forEach(entry => {
             // Validate key format first:
             const keyValidation = validateKey(entry.key);
-            if (keyValidation.label === Left) {
-                errors.push({ entry, kind: Kind.INVALID_KEY, reason: keyValidation.content });
+            if (isLeft(keyValidation)) {
+                errors.push({ entry, kind: Kind.INVALID_KEY, reason: keyValidation.Left });
             } else {
                 // Key format is valid (but key may be unrecognized).
                 const item: Item | undefined = itemList.find(i => i.key === entry.key);
@@ -72,8 +72,8 @@ export function validateEntriesWith(items: ItemCollection) {
                     errors.push({ entry, kind: Kind.UNRECOGNIZED_KEY });
                 } else {
                     const validation = item.validate(entry.value);
-                    if (validation.label === Left) {
-                        errors.push({ entry, kind: Kind.INVALID_VALUE, reason: validation.content });
+                    if (isLeft(validation)) {
+                        errors.push({ entry, kind: Kind.INVALID_VALUE, reason: validation.Left });
                     }
                     if (item.unique && entries.filter(e => e.key === entry.key).length > 1) {
                         duplicateItems.push(item);
@@ -93,25 +93,17 @@ export function validateEntriesWith(items: ItemCollection) {
             .forEach(item => {
                 errors.push({ item, kind: Kind.MULTIPLE_UNIQUE });
             });
-        return (
-            errors.length > 0
-            ? { label: Left, content: errors }
-            : { label: Right, content: entries }
-        );
+        return errors.length > 0 ? Left(errors) : Right(entries);
     };
 }
 
 export const validate = validateWith(DEFAULT_ITEMS);
 
 export function validateWith(items: ItemCollection, options: MetadataOptions = {}) {
-    const underscoresAsHyphens = fromMaybe(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
+    const underscoresAsHyphens = fromMaybeUndefined(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
     return (metadata: Metadata): ValidationResult<Metadata> => {
         const entries = toEntries(metadata, underscoresAsHyphens);
         const result = validateEntriesWith(items)(entries);
-        return (
-            result.label === Left
-            ? { label: Left, content: result.content }
-            : { label: Right, content: metadata }
-        );
+        return isLeft(result) ? Left(result.Left) : Right(metadata);
     };
 }

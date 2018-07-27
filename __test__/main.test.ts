@@ -8,22 +8,22 @@ import {
 } from "./valid-example-metadata";
 
 it("typical metadata is correctly validated and stringified", () => {
-    expect(validateAndStringify(METADATA_TYPICAL)).toEqual({ label: Right, content: STRINGIFIED_TYPICAL });
+    expect(validateAndStringify(METADATA_TYPICAL)).toEqual(Right(STRINGIFIED_TYPICAL));
 });
 
 it("typical metadata is correctly read and validated", () => {
-    expect(readAndValidate(STRINGIFIED_TYPICAL)).toEqual({ label: Right, content: METADATA_TYPICAL });
+    expect(readAndValidate(STRINGIFIED_TYPICAL)).toEqual(Right(METADATA_TYPICAL));
 });
 
 it("typical metadata is invalid without underscoresAsHyphens", () => {
     expect(validateAndStringifyWith(DEFAULT_ITEMS, {
         underscoresAsHyphens: false,
-    })(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+    })(METADATA_TYPICAL)).toEqual(Left([
         {
             kind: Kind.UNRECOGNIZED_KEY,
             entry: { key: "run_at", value: "document-start" },
         },
-    ] });
+    ]));
 });
 
 it("typical metadata is invalid when @match is unique", () => {
@@ -33,12 +33,12 @@ it("typical metadata is invalid when @match is unique", () => {
             ...DEFAULT_ITEMS,
             match: ITEM_MATCH,
         },
-    )(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+    )(METADATA_TYPICAL)).toEqual(Left([
         {
             kind: Kind.MULTIPLE_UNIQUE,
             item: ITEM_MATCH,
         },
-    ] });
+    ]));
 });
 
 it("typical metadata is invalid when description is required", () => {
@@ -48,12 +48,12 @@ it("typical metadata is invalid when description is required", () => {
             ...DEFAULT_ITEMS,
             description: ITEM_DESCRIPTION,
         },
-    )(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+    )(METADATA_TYPICAL)).toEqual(Left([
         {
             kind: Kind.REQUIRED_MISSING,
             item: ITEM_DESCRIPTION,
         },
-    ] });
+    ]));
 });
 
 it("typical metadata is invalid when name cannot contain whitespace", () => {
@@ -68,13 +68,13 @@ it("typical metadata is invalid when name cannot contain whitespace", () => {
             ...DEFAULT_ITEMS,
             name: ITEM_NAME,
         },
-    )(METADATA_TYPICAL)).toEqual({ label: Left, content: [
+    )(METADATA_TYPICAL)).toEqual(Left([
         {
             kind: Kind.INVALID_VALUE,
             entry: { key: "name", value: "Example Userscript" },
             reason: Msg.whitespaceNotAllowed,
         },
-    ] });
+    ]));
 });
 
 it("typical metadata with non-semver version is valid when version has no constraints", () => {
@@ -85,5 +85,5 @@ it("typical metadata with non-semver version is valid when version has no constr
             ...DEFAULT_ITEMS,
             version: ITEM_VERSION,
         },
-    )(METADATA_WITH_WEIRD_VERSION)).toEqual({ label: Right, content: STRINGIFIED_TYPICAL.replace(METADATA_TYPICAL.version, "Beta") });
+    )(METADATA_WITH_WEIRD_VERSION)).toEqual(Right(STRINGIFIED_TYPICAL.replace(METADATA_TYPICAL.version, "Beta")));
 });

@@ -21,21 +21,21 @@ const bar = "bar";
 const ENTRY_NAME = { key: "name", value: "Example Userscript" };
 const ENTRY_NOFRAMES = { key: "noframes", value: true };
 
-function failure(line: string) { return { label: Left, content: line }; }
-const LINE_RESULT_NAME = { label: Right, content: ENTRY_NAME };
-const LINE_RESULT_NOFRAMES = { label: Right, content: ENTRY_NOFRAMES };
+function failure(line: string) { return Left(line); }
+const LINE_RESULT_NAME = Right(ENTRY_NAME);
+const LINE_RESULT_NOFRAMES = Right(ENTRY_NOFRAMES);
 
-const EXTRACT_RESULT_EMPTY = { label: Right, content: "" };
-const EXTRACT_RESULT_NO_COMMENTS = { label: Left, content: ExtractionError.NO_LINE_COMMENTS };
-const EXTRACT_RESULT_NO_START_TAG = { label: Left, content: ExtractionError.NO_START_TAG };
-const EXTRACT_RESULT_NO_END_TAG = { label: Left, content: ExtractionError.NO_END_TAG };
-const EXTRACT_RESULT_END_TAG_BEFORE_START_TAG = { label: Left, content: ExtractionError.END_TAG_BEFORE_START_TAG };
+const EXTRACT_RESULT_EMPTY = Right("");
+const EXTRACT_RESULT_NO_COMMENTS = Left(ExtractionError.NO_LINE_COMMENTS);
+const EXTRACT_RESULT_NO_START_TAG = Left(ExtractionError.NO_START_TAG);
+const EXTRACT_RESULT_NO_END_TAG = Left(ExtractionError.NO_END_TAG);
+const EXTRACT_RESULT_END_TAG_BEFORE_START_TAG = Left(ExtractionError.END_TAG_BEFORE_START_TAG);
 
-const READ_AND_VALIDATE_RESULT_TYPICAL = { label: Right, content: {
+const READ_AND_VALIDATE_RESULT_TYPICAL = Right({
     name: "Example Userscript",
     version: "1.0.0",
     noframes: true,
-} };
+});
 
 it("a valid string entry is correctly parsed", () => {
     expect(parseLine("@name Example Userscript")).toEqual(LINE_RESULT_NAME);
