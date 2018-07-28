@@ -5,6 +5,10 @@ export * from "./patterns";
 export * from "./types";
 
 export {
+    KEY,
+} from "./key";
+
+export {
     BlockParseResult,
     ExtractionError,
     ExtractionResult,

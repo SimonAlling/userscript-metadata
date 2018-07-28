@@ -1,5 +1,5 @@
 import { r } from "../src/common";
-import { Left, Right } from "../src/types";
+import { Left, Right, isRight } from "../src/types";
 import { readAndValidate } from "../src/index";
 import {
     ExtractionError,
@@ -31,11 +31,11 @@ const EXTRACT_RESULT_NO_START_TAG = Left(ExtractionError.NO_START_TAG);
 const EXTRACT_RESULT_NO_END_TAG = Left(ExtractionError.NO_END_TAG);
 const EXTRACT_RESULT_END_TAG_BEFORE_START_TAG = Left(ExtractionError.END_TAG_BEFORE_START_TAG);
 
-const READ_AND_VALIDATE_RESULT_TYPICAL = Right({
+const READ_AND_VALIDATE_RESULT_TYPICAL = {
     name: "Example Userscript",
     version: "1.0.0",
     noframes: true,
-});
+};
 
 it("a valid string entry is correctly parsed", () => {
     expect(parseLine("@name Example Userscript")).toEqual(LINE_RESULT_NAME);
@@ -73,7 +73,12 @@ it("the empty block is properly extracted", () => {
 });
 
 it("a typical block is properly extracted, parsed and validated", () => {
-    expect(readAndValidate(TYPICAL_USERSCRIPT)).toEqual(READ_AND_VALIDATE_RESULT_TYPICAL);
+    const result = readAndValidate(TYPICAL_USERSCRIPT);
+    expect(isRight(result)).toBe(true);
+    if (isRight(result)) {
+        expect(result.Right.metadata).toEqual(READ_AND_VALIDATE_RESULT_TYPICAL);
+        expect(result.Right.warnings.length).toBe(1);
+    }
 });
 
 it("no comments is caught", () => {

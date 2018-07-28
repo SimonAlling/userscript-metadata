@@ -1,13 +1,21 @@
-import { Either, Entry, Left, Metadata, MetadataOptions, Right, isLeft } from "./types";
+import { Either, Entries, Entry, Left, Metadata, ValidateEntriesOptions, ValidateOptions, Right, Warning, isLeft, mapEither } from "./types";
 import { fromMaybeUndefined } from "./common";
-import { Item, ItemCollection } from "./item";
+import { Item } from "./item";
 import { toEntries } from "./conversion";
-import { DEFAULT_ITEMS } from "./data";
-import { KEY_RULES } from "./key";
+import { DEFAULT_ITEMS, DEFAULT_WARNINGS } from "./data";
+import { not, isEmpty, containsWhitespace } from "./common";
+import { Constraint } from "./common";
+import * as Msg from "./messages";
 
 export const UNDERSCORES_AS_HYPHENS_DEFAULT = true;
 
-export type ValidationResult<T> = Either<ReadonlyArray<ValidationError>, T>
+export type ValidationResult<T> = Either<
+    ReadonlyArray<ValidationError>,
+    {
+        warnings: ReadonlyArray<Warning>
+        validated: T
+    }
+>
 
 export const enum Kind {
     INVALID_KEY = "INVALID_KEY",
@@ -36,6 +44,17 @@ export type ValidationError = {
     readonly entry: Entry
 }
 
+const KEY_RULES: ReadonlyArray<Constraint<string>> = [
+    {
+        requirement: not(isEmpty),
+        message: Msg.emptyStringNotAllowed,
+    },
+    {
+        requirement: not(containsWhitespace),
+        message: Msg.whitespaceNotAllowed,
+    },
+];
+
 function validateKey(key: string): Either<string, string> {
     for (const rule of KEY_RULES) {
         if (!rule.requirement(key)) {
@@ -45,11 +64,11 @@ function validateKey(key: string): Either<string, string> {
     return Right(key);
 }
 
-export const validateEntries = validateEntriesWith(DEFAULT_ITEMS);
+export const validateEntries = validateEntriesWith();
 
-export function validateEntriesWith(items: ItemCollection) {
-    return (entries: ReadonlyArray<Entry>): ValidationResult<ReadonlyArray<Entry>> => {
-        const itemList = Object.values(items);
+export function validateEntriesWith(options: ValidateEntriesOptions = {}) {
+    return (entries: Entries): ValidationResult<Entries> => {
+        const itemList = Object.values(fromMaybeUndefined(DEFAULT_ITEMS, options.items));
         const requiredItems = itemList.filter(i => i.required);
         const duplicateItems: Item[] = [];
         const errors: ValidationError[] = [];
@@ -93,17 +112,27 @@ export function validateEntriesWith(items: ItemCollection) {
             .forEach(item => {
                 errors.push({ item, kind: Kind.MULTIPLE_UNIQUE });
             });
-        return errors.length > 0 ? Left(errors) : Right(entries);
+        return (
+            errors.length > 0
+            ? Left(errors)
+            : Right({
+                validated: entries,
+                warnings: fromMaybeUndefined(DEFAULT_WARNINGS, options.warnings)(entries),
+            })
+        );
     };
 }
 
-export const validate = validateWith(DEFAULT_ITEMS);
+export const validate = validateWith();
 
-export function validateWith(items: ItemCollection, options: MetadataOptions = {}) {
+export function validateWith(options: ValidateOptions = {}) {
     const underscoresAsHyphens = fromMaybeUndefined(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
     return (metadata: Metadata): ValidationResult<Metadata> => {
         const entries = toEntries(metadata, underscoresAsHyphens);
-        const result = validateEntriesWith(items)(entries);
-        return isLeft(result) ? Left(result.Left) : Right(metadata);
+        const result = validateEntriesWith(options)(entries);
+        return mapEither(x => ({
+            validated: metadata,
+            warnings: x.warnings,
+        }), result);
     };
 }

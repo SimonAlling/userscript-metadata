@@ -2,7 +2,10 @@ import {
     BooleanItem,
     StringItem,
 } from "./item";
-import { isMatchPattern } from "./patterns";
+import { isMatchPattern, isIncludePattern_regex } from "./patterns";
+import { KEY } from "./key";
+import { Entries, Warning, WarningsGenerator } from "./types";
+import * as Msg from "./messages";
 
 export const DOCUMENT_END = "document-end";
 export const DOCUMENT_IDLE = "document-idle";
@@ -11,28 +14,6 @@ export const RUN_AT_VALUES = [ DOCUMENT_END, DOCUMENT_IDLE, DOCUMENT_START ];
 
 const SEMVER_EXAMPLE = "1.0.5";
 const SEMVER_REGEX = /^(\d+)(?:\.(\d+))*$/;
-
-export const KEY = {
-    author: "author",
-    date: "date",
-    description: "description",
-    downloadURL: "downloadURL",
-    exclude: "exclude",
-    grant: "grant",
-    homepageURL: "homepageURL",
-    icon: "icon",
-    include: "include",
-    license: "license",
-    match: "match",
-    name: "name",
-    namespace: "namespace",
-    noframes: "noframes",
-    require: "require",
-    resource: "resource",
-    run_at: "run-at",
-    updateURL: "updateURL",
-    version: "version",
-};
 
 export const DEFAULT_ITEMS = {
     author: new StringItem({
@@ -140,4 +121,21 @@ export const DEFAULT_ITEMS = {
             message: `Value must be a semantic version number, e.g. "${SEMVER_EXAMPLE}".`,
         } ],
     }),
+};
+
+export const DEFAULT_WARNINGS: WarningsGenerator = (entries: Entries): ReadonlyArray<Warning> => {
+    const warnings = [];
+    if (!entries.some(entry => [KEY.match, KEY.include].includes(entry.key))) {
+        warnings.push({
+            summary: Msg.noMatchOrIncludeSummary,
+            description: Msg.noMatchOrIncludeDescription,
+        });
+    }
+    if (entries.some(entry => entry.key === KEY.include && !isIncludePattern_regex(entry.value as string))) {
+        warnings.push({
+            summary: Msg.matchInsteadOfIncludeSummary,
+            description: Msg.matchInsteadOfIncludeDescription,
+        });
+    }
+    return warnings;
 };

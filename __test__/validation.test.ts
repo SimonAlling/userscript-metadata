@@ -1,5 +1,5 @@
 import {
-    Kind, Metadata, Right,
+    Kind, Metadata,
     isLeft, isRight, validate, validateWith,
 } from "../src/index";
 import {
@@ -68,7 +68,7 @@ const METADATA_INVALID_NOFRAMES: Metadata = {
 // Check that validation works:
 
 it("empty metadata is valid with empty item list", () => {
-    const result = validateWith(ITEMS_EMPTY)(METADATA_EMPTY);
+    const result = validateWith({ items: ITEMS_EMPTY })(METADATA_EMPTY);
     expect(isRight(result)).toEqual(true);
 });
 
@@ -77,20 +77,20 @@ it("empty metadata is invalid with default item list", () => {
     expect(isLeft(result)).toEqual(true);
 });
 
-it("basic metadata is valid with default item list", () => {
+it("basic metadata is valid and has expected warnings with default item list", () => {
     const result = validate(METADATA_BASIC);
     expect(isRight(result)).toEqual(true);
 });
 
 it("basic metadata is invalid with empty item list", () => {
-    const result = validateWith(ITEMS_EMPTY)(METADATA_BASIC);
+    const result = validateWith({ items: ITEMS_EMPTY })(METADATA_BASIC);
     expect(isLeft(result)).toEqual(true);
 });
 
 it("validation returns the same metadata", () => {
     const result = validate(METADATA_BASIC);
     if (isRight(result)) {
-        expect(result.Right).toBe(METADATA_BASIC);
+        expect(result.Right.validated).toBe(METADATA_BASIC);
     }
 });
 

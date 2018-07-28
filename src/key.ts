@@ -1,14 +1,21 @@
-import { not, isEmpty, containsWhitespace } from "./common";
-import { Constraint } from "./common";
-import * as Msg from "./messages";
-
-export const KEY_RULES: ReadonlyArray<Constraint<string>> = [
-    {
-        requirement: not(isEmpty),
-        message: Msg.emptyStringNotAllowed,
-    },
-    {
-        requirement: not(containsWhitespace),
-        message: Msg.whitespaceNotAllowed,
-    },
-];
+export const KEY = {
+    author: "author",
+    date: "date",
+    description: "description",
+    downloadURL: "downloadURL",
+    exclude: "exclude",
+    grant: "grant",
+    homepageURL: "homepageURL",
+    icon: "icon",
+    include: "include",
+    license: "license",
+    match: "match",
+    name: "name",
+    namespace: "namespace",
+    noframes: "noframes",
+    require: "require",
+    resource: "resource",
+    run_at: "run-at",
+    updateURL: "updateURL",
+    version: "version",
+};

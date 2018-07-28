@@ -2,12 +2,26 @@ import { ItemCollection } from "./item";
 import { DEFAULT_ITEMS } from "./data";
 import { fromMaybeUndefined } from "./common";
 import { fromEntries } from "./conversion";
-import { Either, Left, Metadata, MetadataOptions, Options, Right, isLeft, mapEither } from "./types";
+import { Either, Left, Metadata, Options, Right, ValidateOptions, Warning, isLeft, mapEither } from "./types";
 import { stringify } from "./stringify";
 import { ExtractionError, extractBlock, parseBlock } from "./read";
 import { validateEntriesWith, validateWith, ValidationError, UNDERSCORES_AS_HYPHENS_DEFAULT } from "./validation";
 
-export type StringifyResult = Either<ReadonlyArray<ValidationError>, string>
+export type StringifyResult = Either<
+    ReadonlyArray<ValidationError>,
+    {
+        stringified: string
+        warnings: ReadonlyArray<Warning>
+    }
+>
+
+export type ReadResult = Either<
+    ReadFailure,
+    {
+        metadata: Metadata
+        warnings: ReadonlyArray<Warning>
+    }
+>
 
 export const enum RF {
     EXTRACT,
@@ -26,20 +40,24 @@ export type ReadFailure = {
     readonly errors: ReadonlyArray<ValidationError>
 };
 
-export type ReadResult = Either<ReadFailure, Metadata>
+export const validateAndStringify = validateAndStringifyWith();
 
-export const validateAndStringify = validateAndStringifyWith(DEFAULT_ITEMS);
-
-export function validateAndStringifyWith(items: ItemCollection, options?: Options) {
+export function validateAndStringifyWith(options?: Options) {
     return (metadata: Metadata): StringifyResult => {
-        const validationResult = validateWith(items, options)(metadata);
-        return mapEither(x => stringify(x, options), validationResult);
+        const validationResult = validateWith(options)(metadata);
+        return mapEither(
+            x => ({
+                stringified: stringify(x.validated, options),
+                warnings: x.warnings,
+            }),
+            validationResult,
+        );
     };
 }
 
-export const readAndValidate = readAndValidateWith(DEFAULT_ITEMS);
+export const readAndValidate = readAndValidateWith();
 
-export function readAndValidateWith(items: ItemCollection, options: MetadataOptions = {}) {
+export function readAndValidateWith(options: ValidateOptions = {}) {
     return (userscript: string): ReadResult => {
         const extractResult = extractBlock(userscript);
         if (isLeft(extractResult)) {
@@ -55,7 +73,7 @@ export function readAndValidateWith(items: ItemCollection, options: MetadataOpti
                 lines: parseResult.Left,
             } as ReadFailure);
         }
-        const validationResult = validateEntriesWith(items)(parseResult.Right);
+        const validationResult = validateEntriesWith(options)(parseResult.Right);
         if (isLeft(validationResult)) {
             return Left({
                 failure: RF.VALIDATE,
@@ -63,7 +81,8 @@ export function readAndValidateWith(items: ItemCollection, options: MetadataOpti
             } as ReadFailure);
         }
         const underscoresAsHyphens = fromMaybeUndefined(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
-        const metadata = fromEntries(validationResult.Right, underscoresAsHyphens);
-        return Right(metadata);
+        const metadata = fromEntries(validationResult.Right.validated, underscoresAsHyphens);
+        const warnings = validationResult.Right.warnings;
+        return Right({ metadata, warnings });
     };
 }

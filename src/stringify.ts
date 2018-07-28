@@ -1,4 +1,4 @@
-import { Entries, EntriesOptions, Entry, Metadata, SingleValue, Options } from "./types";
+import { Entries, StringifyOptions, Entry, Metadata, SingleValue } from "./types";
 import { fromMaybeUndefined } from "./common";
 import { toEntries } from "./conversion";
 import { UNDERSCORES_AS_HYPHENS_DEFAULT } from "./validation";
@@ -8,13 +8,13 @@ const ALIGN_DEFAULT = true;
 const MINIFY_DEFAULT = false;
 const SPACING_DEFAULT = 2;
 
-export function stringify(metadata: Metadata, options: Options = {}): string {
+export function stringify(metadata: Metadata, options: StringifyOptions = {}): string {
     const underscoresAsHyphens = fromMaybeUndefined(UNDERSCORES_AS_HYPHENS_DEFAULT, options.underscoresAsHyphens);
     const entries = toEntries(metadata, underscoresAsHyphens);
     return stringifyEntries(entries, options);
 }
 
-export function stringifyEntries(entries: Entries, options: EntriesOptions = {}) {
+export function stringifyEntries(entries: Entries, options: StringifyOptions = {}) {
     // minify option overrides align and spacing.
     const minify = fromMaybeUndefined(MINIFY_DEFAULT, options.minify);
     const align = minify ? false : fromMaybeUndefined(ALIGN_DEFAULT, options.align);

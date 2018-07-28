@@ -1,6 +1,7 @@
 import {
-    KEY, DEFAULT_ITEMS,
+    DEFAULT_ITEMS,
 } from "../src/index";
+import { KEY } from "../src/key";
 import { replaceHyphens, replaceUnderscores } from "../src/common";
 import { show } from "./helpers";
 

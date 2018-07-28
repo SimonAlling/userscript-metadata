@@ -1,4 +1,4 @@
-import { Kind, Left, Metadata, validate, isLeft } from "../src/index";
+import { Kind, Metadata, validate, isLeft } from "../src/index";
 
 export function show(xs: string[]): string {
     return xs.join(", ");

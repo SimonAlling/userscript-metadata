@@ -1,3 +1,5 @@
+import { ItemCollection } from "./item";
+
 export type Entry = {
     readonly key: string
     readonly value: SingleValue
@@ -13,19 +15,32 @@ export type Value = SingleValue | ReadonlyArray<SingleValue>
 
 export type Entries = ReadonlyArray<Entry>
 
+export interface Warning {
+    summary: string
+    description: string
+}
+
+export type WarningsGenerator = (entries: Entries) => ReadonlyArray<Warning>
+
 export type Metadata = { readonly [key: string]: Value }
 
-export interface MetadataOptions {
+export interface ValidateEntriesOptions {
+    items?: ItemCollection
+    warnings?: WarningsGenerator
+}
+
+export type ValidateOptions = ValidateEntriesOptions & {
     underscoresAsHyphens?: boolean
 }
 
-export interface EntriesOptions {
+export interface StringifyOptions {
     align?: boolean
     minify?: boolean
     spacing?: number
+    underscoresAsHyphens?: boolean
 }
 
-export type Options = MetadataOptions & EntriesOptions
+export type Options = StringifyOptions & ValidateOptions
 
 // Maybe
 export type Just<T> = { Just: T }
