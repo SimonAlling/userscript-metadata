@@ -128,7 +128,7 @@ it("a value containing line breaks is caught", () => {
 });
 
 it("an invalid @version value is caught", () => {
-    expectInvalidValue(METADATA_INVALID_VERSION, "version");
+    expectInvalidValue(METADATA_INVALID_VERSION, "ersion");
 });
 
 it("an invalid @match value is caught", () => {

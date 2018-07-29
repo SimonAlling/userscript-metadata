@@ -12,7 +12,6 @@ export const DOCUMENT_IDLE = "document-idle";
 export const DOCUMENT_START = "document-start";
 export const RUN_AT_VALUES = [ DOCUMENT_END, DOCUMENT_IDLE, DOCUMENT_START ];
 
-const SEMVER_EXAMPLE = "1.0.5";
 const SEMVER_REGEX = /^(\d+)(?:\.(\d+))*$/;
 
 export const DEFAULT_ITEMS = {
@@ -72,7 +71,7 @@ export const DEFAULT_ITEMS = {
         required: false,
         constraints: [ {
             requirement: isMatchPattern,
-            message: `Value must be a valid @match pattern (e.g. "*://example.com/*").`,
+            message: Msg.validMatchPatternRequired,
         } ],
     }),
     name: new StringItem({
@@ -118,7 +117,7 @@ export const DEFAULT_ITEMS = {
         required: false,
         constraints: [ {
             requirement: v => SEMVER_REGEX.test(v),
-            message: `Value must be a semantic version number, e.g. "${SEMVER_EXAMPLE}".`,
+            message: Msg.semanticVersionRequired,
         } ],
     }),
 };
