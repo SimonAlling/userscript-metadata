@@ -2,9 +2,12 @@
   "name": "ts-userscript-metadata",
   "version": "0.1.0",
   "description": "A strongly typed userscript metadata library.",
-  "main": "dist/index.js",
+  "main": "dist/index",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc && npm run rename && npm run commonjs",
+    "clean": "rm -rf dist/*",
+    "commonjs": "babel **/*.mjs --out-dir .",
+    "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"dist/**\"",
     "test": "jest"
   },
   "types": "dist/index.d.ts",
@@ -17,8 +20,12 @@
   "devDependencies": {
     "@types/escape-string-regexp": "^1.0.0",
     "@types/jest": "^23.3.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-dynamic-import-node": "^2.0.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "escape-string-regexp": "^1.0.5",
     "jest": "^23.4.1",
+    "renamer": "^1.0.0",
     "ts-jest": "^23.0.1",
     "typescript": "^2.9.2"
   },

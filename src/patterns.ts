@@ -1,4 +1,4 @@
-import * as escapeStringRegexp from "escape-string-regexp";
+import escapeStringRegexp from "escape-string-regexp";
 import { r } from "./common";
 
 type NullOr<T> = T | null;
