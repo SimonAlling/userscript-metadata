@@ -83,12 +83,16 @@ export function validateEntriesWith(options: ValidateEntriesOptions = {}) {
             // Validate key format first:
             const keyValidation = validateKey(entry.key);
             if (isLeft(keyValidation)) {
-                errors.push({ entry, kind: Kind.INVALID_KEY, reason: keyValidation.Left });
+                if (!errors.some(e => e.kind === Kind.INVALID_KEY && e.entry.key === entry.key)) {
+                    errors.push({ entry, kind: Kind.INVALID_KEY, reason: keyValidation.Left });
+                }
             } else {
                 // Key format is valid (but key may be unrecognized).
                 const item: Item | undefined = itemList.find(i => i.key === entry.key);
                 if (item === undefined) {
-                    errors.push({ entry, kind: Kind.UNRECOGNIZED_KEY });
+                    if (!errors.some(e => e.kind === Kind.UNRECOGNIZED_KEY && e.entry.key === entry.key)) {
+                        errors.push({ entry, kind: Kind.UNRECOGNIZED_KEY });
+                    }
                 } else {
                     const validation = item.validate(entry.value);
                     if (isLeft(validation)) {
