@@ -1,5 +1,3 @@
-import { ItemCollection } from "./item";
-import { DEFAULT_ITEMS } from "./data";
 import { fromMaybeUndefined } from "./common";
 import { fromEntries } from "./conversion";
 import { Either, Left, Metadata, Options, Right, ValidateOptions, Warning, isLeft, mapEither } from "./types";
