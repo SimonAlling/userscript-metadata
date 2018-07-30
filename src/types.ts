@@ -26,7 +26,7 @@ export type Metadata = { readonly [key: string]: Value }
 
 export interface ValidateEntriesOptions {
     items?: ItemCollection
-    warnings?: WarningsGenerator
+    warnings?: ReadonlyArray<WarningsGenerator>
 }
 
 export type ValidateOptions = ValidateEntriesOptions & {

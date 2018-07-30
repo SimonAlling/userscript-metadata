@@ -1,4 +1,4 @@
-import { Either, Entries, Entry, Left, Metadata, ValidateEntriesOptions, ValidateOptions, Right, Warning, isLeft, mapEither } from "./types";
+import { Either, Entries, Entry, Left, Metadata, ValidateEntriesOptions, ValidateOptions, Right, Warning, WarningsGenerator, isLeft, mapEither } from "./types";
 import { fromMaybeUndefined } from "./common";
 import { Item } from "./item";
 import { toEntries } from "./conversion";
@@ -121,7 +121,10 @@ export function validateEntriesWith(options: ValidateEntriesOptions = {}) {
             ? Left(errors)
             : Right({
                 validated: entries,
-                warnings: fromMaybeUndefined(DEFAULT_WARNINGS, options.warnings)(entries),
+                warnings: fromMaybeUndefined(DEFAULT_WARNINGS, options.warnings).reduce(
+                    (acc: ReadonlyArray<Warning>, gen: WarningsGenerator) => acc.concat(gen(entries)),
+                    [],
+                ),
             })
         );
     };

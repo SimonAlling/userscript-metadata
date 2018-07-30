@@ -122,19 +122,21 @@ export const DEFAULT_ITEMS = {
     }),
 };
 
-export const DEFAULT_WARNINGS: WarningsGenerator = (entries: Entries): ReadonlyArray<Warning> => {
-    const warnings = [];
-    if (!entries.some(entry => [KEY.match, KEY.include].includes(entry.key))) {
-        warnings.push({
+export const DEFAULT_WARNINGS: ReadonlyArray<WarningsGenerator> = [
+    entries => (
+        !entries.some(entry => [KEY.match, KEY.include].includes(entry.key))
+        ? [ {
             summary: Msg.noMatchOrIncludeSummary,
             description: Msg.noMatchOrIncludeDescription,
-        });
-    }
-    if (entries.some(entry => entry.key === KEY.include && !isIncludePattern_regex(entry.value as string))) {
-        warnings.push({
+        } ]
+        : []
+    ),
+    entries => (
+        entries.some(entry => entry.key === KEY.include && !isIncludePattern_regex(entry.value as string))
+        ? [ {
             summary: Msg.matchInsteadOfIncludeSummary,
             description: Msg.matchInsteadOfIncludeDescription,
-        });
-    }
-    return warnings;
-};
+        } ]
+        : []
+    ),
+];
