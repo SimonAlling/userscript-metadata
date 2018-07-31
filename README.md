@@ -1,12 +1,12 @@
-# ts-userscript-metadata
+# userscript-metadata
 
-A strongly typed library for handling userscript metadata.
+Parse, validate and stringify metadata in TypeScript.
 
 
 ## Installation
 
 ```
-npm install --save typescript ts-userscript-metadata
+npm install --save typescript userscript-metadata
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ This example demonstrates how metadata can be defined, validated and stringified
 import {
     Kind, Metadata, ValidationError,
     isRight, validateAndStringify,
-} from "ts-userscript-metadata";
+} from "userscript-metadata";
 
 const metadata: Metadata = {
     name: "Example Userscript",
@@ -79,7 +79,7 @@ Assuming the same definition of `stringifyError` as above, this is how metadata 
 import {
     Kind, ValidationError, ReadFailure, ReadFailureType,
     isRight, readAndValidate,
-} from "ts-userscript-metadata";
+} from "userscript-metadata";
 
 const userscript: string = `
 // ==UserScript==
@@ -142,7 +142,7 @@ If you call them with an options object, you get back customized versions of `va
 ```typescript
 import {
     StringItem, validateAndStringifyWith, DEFAULT_ITEMS, DEFAULT_WARNINGS,
-} from "ts-userscript-metadata";
+} from "userscript-metadata";
 
 const validateAndStringify_custom = validateAndStringifyWith({
     items: {

@@ -1,7 +1,7 @@
 {
-  "name": "ts-userscript-metadata",
-  "version": "0.1.0",
-  "description": "A strongly typed userscript metadata library.",
+  "name": "userscript-metadata",
+  "version": "1.0.0",
+  "description": "Parse, validate and stringify metadata in TypeScript.",
   "main": "dist/index",
   "scripts": {
     "build": "npm run clean && tsc && npm run rename && npm run commonjs",
@@ -17,6 +17,7 @@
   "sideEffects": false,
   "author": "Simon Alling",
   "license": "MIT",
+  "repository": "https://github.com/SimonAlling/userscript-metadata",
   "devDependencies": {
     "@types/escape-string-regexp": "^1.0.0",
     "@types/jest": "^23.3.0",
