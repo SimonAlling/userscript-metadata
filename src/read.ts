@@ -14,10 +14,10 @@ interface Comment {
 }
 
 export const enum ExtractionError {
-    NO_LINE_COMMENTS,
-    NO_START_TAG,
-    NO_END_TAG,
-    END_TAG_BEFORE_START_TAG,
+    NO_LINE_COMMENTS = "NO_LINE_COMMENTS",
+    NO_START_TAG = "NO_START_TAG",
+    NO_END_TAG = "NO_END_TAG",
+    END_TAG_BEFORE_START_TAG = "END_TAG_BEFORE_START_TAG",
 }
 
 export type ExtractionResult = Either<ExtractionError, string>

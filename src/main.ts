@@ -22,9 +22,9 @@ export type ReadResult = Either<
 >
 
 export const enum ReadFailureType {
-    EXTRACT,
-    PARSE,
-    VALIDATE,
+    EXTRACT = "EXTRACT",
+    PARSE = "PARSE",
+    VALIDATE = "VALIDATE",
 }
 
 export type ReadFailure = {
