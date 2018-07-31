@@ -21,20 +21,20 @@ export type ReadResult = Either<
     }
 >
 
-export const enum RF {
+export const enum ReadFailureType {
     EXTRACT,
     PARSE,
     VALIDATE,
 }
 
 export type ReadFailure = {
-    readonly failure: RF.EXTRACT
+    readonly type: ReadFailureType.EXTRACT
     readonly reason: ExtractionError
 } | {
-    readonly failure: RF.PARSE
+    readonly type: ReadFailureType.PARSE
     readonly lines: ReadonlyArray<string>
 } | {
-    readonly failure: RF.VALIDATE
+    readonly type: ReadFailureType.VALIDATE
     readonly errors: ReadonlyArray<ValidationError>
 };
 
@@ -60,21 +60,21 @@ export function readAndValidateWith(options: ValidateOptions = {}) {
         const extractResult = extractBlock(userscript);
         if (isLeft(extractResult)) {
             return Left({
-                failure: RF.EXTRACT,
+                type: ReadFailureType.EXTRACT,
                 reason: extractResult.Left,
             } as ReadFailure);
         }
         const parseResult = parseBlock(extractResult.Right);
         if (isLeft(parseResult)) {
             return Left({
-                failure: RF.PARSE,
+                type: ReadFailureType.PARSE,
                 lines: parseResult.Left,
             } as ReadFailure);
         }
         const validationResult = validateEntriesWith(options)(parseResult.Right);
         if (isLeft(validationResult)) {
             return Left({
-                failure: RF.VALIDATE,
+                type: ReadFailureType.VALIDATE,
                 errors: validationResult.Left,
             } as ReadFailure);
         }
