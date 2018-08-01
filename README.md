@@ -168,6 +168,7 @@ const validateAndStringify_custom = validateAndStringifyWith({
             : []
         ),
     ]),
+    underscoresAsHyphens: false,
 });
 
 const result = validateAndStringify_custom(metadata);
@@ -180,6 +181,7 @@ The example above demonstrates several customizations:
   * The `version` item has been deprived of its default constraints and is now required.
   * Two custom items, `foo` and `useful`, have been added.
   * Another warning has been added to the default ones.
+  * `underscoresAsHyphens: false`, which means that a `Metadata` entry like `run_at: "document-start"` is interpreted as `@run_at document-start` and therefore invalid (`@run-at` being the actual key). With `underscoresAsHyphens: true` (default), translation between underscores and hyphens in keys is done automatically, so that the more convenient key `run_at` can be used in source code.
 
 Both `items` and `warnings` are optional; if not specified, they default to `DEFAULT_ITEMS` and `DEFAULT_WARNINGS`, respectively.
 (In fact, `validateAndStringify` is defined as `validateAndStringifyWith()` in the actual code.)
