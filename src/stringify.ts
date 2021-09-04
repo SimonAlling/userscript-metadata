@@ -42,7 +42,7 @@ function stringifyEntry(x: {
         + " ".repeat(Math.max(0, zeroIfNaN(x.columnWidth) - entry.key.length)) // padding (at least 0)
         + " ".repeat(Math.max(1, oneIfNaN(x.spacing))) // spacing (at least 1)
         + stringifyValue(entry.value) // value
-    ).trimRight(); // no trailing whitespace on boolean tags
+    ).trimEnd(); // no trailing whitespace on boolean tags
 }
 
 function stringifyValue(value: SingleValue): string {

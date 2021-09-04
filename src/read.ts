@@ -1,17 +1,10 @@
+import extractComments from "extract-comments";
 import { Either, Entry, Entries, Left, Right, isLeft } from "./types";
 import { START_TAG, END_TAG, TAG_PREFIX } from "./syntax";
 import { r } from "./common";
 
-const extractComments: (s: string) => ReadonlyArray<Comment> = require("extract-comments");
-
 const REGEX_START_TAG = new RegExp(r`^\s*` + START_TAG + r`\s*$`);
 const REGEX_END_TAG   = new RegExp(r`^\s*` + END_TAG   + r`\s*$`);
-
-interface Comment {
-    type: "LineComment" | "BlockComment"
-    value: string
-    raw: string
-}
 
 export const enum ExtractionError {
     NO_LINE_COMMENTS = "NO_LINE_COMMENTS",
@@ -74,6 +67,6 @@ export function parseLine(line: string): LineParseResult {
     } else {
         const key = match[1];
         const value = match[2];
-        return Right({ key, value: value ? value.trimRight() : true } as Entry);
+        return Right({ key, value: value ? value.trimEnd() : true } as Entry);
     }
 }

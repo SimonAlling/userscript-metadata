@@ -26,9 +26,9 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "escape-string-regexp": "^1.0.5",
     "jest": "^23.4.1",
-    "renamer": "^1.0.0",
-    "ts-jest": "^23.0.1",
-    "typescript": "^2.9.2"
+    "renamer": "^1.1.4",
+    "ts-jest": "^23.1.4",
+    "typescript": "^3.9.10"
   },
   "jest": {
     "transform": {

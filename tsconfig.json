@@ -11,7 +11,7 @@
         "esModuleInterop": true,
         "outDir": "dist",
         "lib": [
-            "es2018", "es2016.array.include"
+            "ES2019.String", "es2018", "es2016.array.include"
         ]
     },
     "include": [
