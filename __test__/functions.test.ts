@@ -1,8 +1,34 @@
+import { isValidConnectValue } from "../src/connect";
 import * as P from "../src/patterns";
 import { r } from "../src/common";
 import {
     testMapping, testSoundness, testCompleteness,
 } from "./helpers";
+
+it("isValidConnectValue is sound", () => {
+    testSoundness(isValidConnectValue, [
+        "",
+        "lol",
+        "1.1.1",
+        "1.1.1.1.",
+        "*example.com",
+        "*.example.com",
+        "http://example.com",
+    ]);
+});
+
+it("isValidConnectValue is complete", () => {
+    testCompleteness(isValidConnectValue, [
+        "*",
+        "self",
+        "localhost",
+        "example.com",
+        "www.example.com",
+        "1.2.3.4",
+        "127.0.0.1",
+        "2001:db8:3333:4444:5555:6666:7777:8888",
+    ]);
+});
 
 it("regexFromIncludePattern works for simple include patterns", () => {
     testMapping(x => P.regexFromIncludePattern(x).source, [
