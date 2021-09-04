@@ -1,6 +1,6 @@
 {
   "name": "userscript-metadata",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Parse, validate and stringify metadata in TypeScript.",
   "main": "dist/index",
   "scripts": {
