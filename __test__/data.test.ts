@@ -5,9 +5,9 @@ import { KEY } from "../src/key";
 import { replaceHyphens, replaceUnderscores } from "../src/common";
 import { show } from "./helpers";
 
-const objectKeys_KEY = Object.keys(KEY);
-const objectKeys_KEY_sorted = Object.keys(KEY).sort();
-const objectKeys_DEFAULT_ITEMS = Object.keys(DEFAULT_ITEMS);
+const objectKeys_KEY = Object.keys(KEY) as (keyof typeof KEY)[];
+const objectKeys_KEY_sorted = Object.keys(KEY).sort() as (keyof typeof KEY)[];
+const objectKeys_DEFAULT_ITEMS = Object.keys(DEFAULT_ITEMS) as (keyof typeof DEFAULT_ITEMS)[];
 
 it("keys are sorted in KEY", () => {
     expect(show(objectKeys_KEY)).toBe(show(objectKeys_KEY_sorted));

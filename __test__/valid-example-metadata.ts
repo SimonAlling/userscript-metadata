@@ -1,25 +1,24 @@
 import { r } from "../src/common";
-import { Metadata } from "../src/index";
 
-export const METADATA_EMPTY: Metadata = {};
+export const METADATA_EMPTY = {} as const;
 
-export const METADATA_BASIC: Metadata = {
+export const METADATA_BASIC = {
     "name": "Example Userscript",
     "version": "1.0.0",
-};
+} as const;
 
-export const METADATA_BASIC_WITH_NOFRAMES: Metadata = {
+export const METADATA_BASIC_WITH_NOFRAMES = {
     "name": "Example Userscript",
     "version": "1.0.0",
     "noframes": true,
-};
+} as const;
 
-export const METADATA_RUN_AT: Metadata = {
+export const METADATA_RUN_AT = {
     "name": "Example Userscript",
     "run-at": "document-start",
-};
+} as const;
 
-export const METADATA_TYPICAL: Metadata = {
+export const METADATA_TYPICAL = {
     name: "Example Userscript",
     version: "1.0.0",
     noframes: true,
@@ -28,7 +27,7 @@ export const METADATA_TYPICAL: Metadata = {
         "*://*.example.com/*",
         "*://*.github.com/*",
     ],
-}
+} as const;
 
 export const STRINGIFIED_TYPICAL = r`
 // ==UserScript==

@@ -124,7 +124,7 @@ export const DEFAULT_ITEMS = {
 
 export const DEFAULT_WARNINGS: ReadonlyArray<WarningsGenerator> = [
     entries => (
-        !entries.some(entry => [KEY.match, KEY.include].includes(entry.key))
+        !entries.some(entry => entry.key === KEY.match || entry.key === KEY.include)
         ? [ {
             summary: Msg.noMatchOrIncludeSummary,
             description: Msg.noMatchOrIncludeDescription,
