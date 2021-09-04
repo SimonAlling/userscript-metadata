@@ -1,3 +1,4 @@
+import { isValidConnectValue, validConnectValueRequired } from "./connect";
 import {
     BooleanItem,
     StringItem,
@@ -21,6 +22,15 @@ export const DEFAULT_ITEMS = {
         key: KEY.author,
         unique: true,
         required: false,
+    }),
+    connect: new StringItem({
+        key: KEY.connect,
+        unique: false,
+        required: false,
+        constraints: [ {
+            requirement: isValidConnectValue,
+            message: validConnectValueRequired,
+        } ],
     }),
     date: new StringItem({
         key: KEY.date,

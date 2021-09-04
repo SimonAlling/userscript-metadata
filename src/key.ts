@@ -1,5 +1,6 @@
 export const KEY = {
     author: "author",
+    connect: "connect",
     date: "date",
     description: "description",
     downloadURL: "downloadURL",
