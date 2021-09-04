@@ -40,6 +40,10 @@ const METADATA_INVALID_MATCH: Metadata = {
     "name": "Example Userscript",
     "match": "LOL",
 };
+const METADATA_INVALID_INJECT_INTO: Metadata = {
+    "name": "Example Userscript",
+    "inject-into": "LOL",
+};
 const METADATA_INVALID_RUN_AT: Metadata = {
     "name": "Example Userscript",
     "run-at": "document",
@@ -133,6 +137,10 @@ it("an invalid @version value is caught", () => {
 
 it("an invalid @match value is caught", () => {
     expectInvalidValue(METADATA_INVALID_MATCH, "@match");
+});
+
+it("an invalid @inject-into value is caught", () => {
+    expectInvalidValue(METADATA_INVALID_INJECT_INTO, "content");
 });
 
 it("an invalid @run-at value is caught", () => {

@@ -8,6 +8,7 @@ export const KEY = {
     homepageURL: "homepageURL",
     icon: "icon",
     include: "include",
+    inject_into: "inject-into",
     license: "license",
     match: "match",
     name: "name",
