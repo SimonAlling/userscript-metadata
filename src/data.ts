@@ -12,6 +12,8 @@ export const DOCUMENT_IDLE = "document-idle";
 export const DOCUMENT_START = "document-start";
 export const RUN_AT_VALUES = [ DOCUMENT_END, DOCUMENT_IDLE, DOCUMENT_START ];
 
+const INJECT_INTO_VALUES = [ "auto", "content", "page" ];
+
 const SEMVER_REGEX = /^(\d+)(?:\.(\d+))*$/;
 
 export const DEFAULT_ITEMS = {
@@ -59,6 +61,15 @@ export const DEFAULT_ITEMS = {
         key: KEY.include,
         unique: false,
         required: false,
+    }),
+    inject_into: new StringItem({
+        key: KEY.inject_into,
+        unique: true,
+        required: false,
+        constraints: [ {
+            requirement: v => INJECT_INTO_VALUES.includes(v),
+            message: `Value must be one of ${INJECT_INTO_VALUES.map(x => `"${x}"`).join(", ")}.`,
+        } ],
     }),
     license: new StringItem({
         key: KEY.license,
