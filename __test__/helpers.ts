@@ -29,7 +29,7 @@ export function testMapping<X, Y>(f: (x: X) => Y, expectedMappings: ReadonlyArra
     });
 }
 
-function predicateTester<T>(expected: boolean): (f: (x: T) => boolean, xs: ReadonlyArray<T>) => void {
+function predicateTester(expected: boolean): <T>(f: (x: T) => boolean, xs: ReadonlyArray<T>) => void {
     return (f, xs) => {
         xs.forEach(x => {
             expect(f(x)).toBe(expected);
