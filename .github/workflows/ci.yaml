@@ -73,7 +73,7 @@ jobs:
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           npm ci
-      - name: Install Userscripter
+      - name: Install userscript-metadata
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           npm install "${{ steps.pack.outputs.tarball }}"
