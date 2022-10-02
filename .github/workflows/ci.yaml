@@ -40,7 +40,7 @@ jobs:
         repository:
           - SimonAlling/better-sweclockers
           - SimonAlling/example-userscript
-        node-version: [lts/*]
+        node-version: [current, lts/*, lts/-1, lts/-2]
       fail-fast: false
     steps:
       - uses: actions/checkout@v1
