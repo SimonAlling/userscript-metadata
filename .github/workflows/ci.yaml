@@ -32,6 +32,16 @@ jobs:
           npm run build
         env:
           CI: true
+      - name: Pack
+        id: pack
+        run: |
+          echo "::set-output name=tarball::$(pwd)/$(npm pack)"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        if: ${{ matrix.node-version == 'lts/*' }}
+        with:
+          name: package-tarball
+          path: ${{ steps.pack.outputs.tarball }}
   userscripts:
     name: Dependent Userscripts
     runs-on: ubuntu-latest
@@ -48,16 +58,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: |
-          npm ci
-      - name: Build
-        run: |
-          npm run build
-      - name: Pack
-        id: pack
-        run: |
-          echo "::set-output name=tarball::$(pwd)/$(npm pack)"
       - name: Clone userscript
         uses: actions/checkout@v2
         with:
@@ -73,10 +73,15 @@ jobs:
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           npm ci
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        id: download
+        with:
+          name: package-tarball
       - name: Install userscript-metadata
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
-          npm install "${{ steps.pack.outputs.tarball }}"
+          npm install "${{ steps.download.outputs.download-path }}/userscript-metadata-*.tgz"
       - name: Build userscript
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
