@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: package-tarball
+          name: built-package
           path: ${{ steps.pack.outputs.tarball }}
   userscripts:
     name: Dependent Userscripts
@@ -76,7 +76,7 @@ jobs:
       - name: Install userscript-metadata
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
-          npm install ${{ steps.download.outputs.download-path }}/package-tarball/userscript-metadata-*.tgz
+          npm install ${{ steps.download.outputs.download-path }}/built-package/userscript-metadata-*.tgz
       - name: Build userscript
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
