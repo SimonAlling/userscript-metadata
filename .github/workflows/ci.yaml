@@ -82,7 +82,7 @@ jobs:
       - name: Install userscript-metadata
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
-          npm install ${{ steps.download.outputs.download-path }}/userscript-metadata-*.tgz
+          npm install ${{ steps.download.outputs.download-path }}/package-tarball/userscript-metadata-*.tgz
       - name: Build userscript
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
