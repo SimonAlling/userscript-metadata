@@ -77,7 +77,7 @@ jobs:
         uses: actions/download-artifact@v3
         id: download
       - name: Show downloaded files
-        run: ls -R
+        run: pwd && ls -R
       - name: Install userscript-metadata
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
