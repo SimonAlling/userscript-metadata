@@ -44,6 +44,7 @@ jobs:
           path: ${{ steps.pack.outputs.tarball }}
   userscripts:
     name: Dependent Userscripts
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
